@@ -96,18 +96,18 @@ document.getElementById("scrap-form").addEventListener("submit",event=>{
  document.getElementById("result").textContent=money(estimated);document.getElementById("raw-result").textContent=money(raw);document.getElementById("spot-result").textContent=money(spot*factor);document.getElementById("payout-result").textContent=payout+"%";
  document.getElementById("result-note").textContent=`${weight.toFixed(3)}g of ${puritySelect.value} ${metalSelect.value}.`;
 });
-const STORE_KEY="treasure-group-map-pins-v1";
+const STORE_KEY="treasure-group-map-pins-v1";\nconst selectedRouteStops=new Set();
 function loadPlaces(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||"[]");}catch{return [];}}
 function savePlaces(places){localStorage.setItem(STORE_KEY,JSON.stringify(places));}
 function renderPlaces(){
  const places=loadPlaces(),list=document.getElementById("saved-places");document.getElementById("place-count").textContent=places.length;
  list.innerHTML=places.length?"":'<li class="muted">No places saved yet.</li>';
  places.forEach(place=>{
-  const li=document.createElement("li"),title=document.createElement("div"),meta=document.createElement("div"),actions=document.createElement("div"),open=document.createElement("button"),remove=document.createElement("button");
-  title.className="saved-place-title";title.textContent=place.name;meta.className="saved-place-meta";meta.textContent=place.category+" · "+place.lat.toFixed(4)+", "+place.lng.toFixed(4)+(place.notes?" · "+place.notes:"");
+  const li=document.createElement("li"),title=document.createElement("div"),meta=document.createElement("div"),actions=document.createElement("div"),open=document.createElement("button"),remove=document.createElement("button"),pick=document.createElement("input"),pickLabel=document.createElement("label");
+  title.className="saved-place-title";title.textContent=place.name;pick.type="checkbox";pick.className="route-stop-check";pick.value=place.id;pick.checked=selectedRouteStops.has(place.id);pick.addEventListener("change",()=>{pick.checked?selectedRouteStops.add(place.id):selectedRouteStops.delete(place.id);updateRouteMessage()});pickLabel.className="route-stop-label";pickLabel.append(pick,document.createTextNode(" Add to route"));meta.className="saved-place-meta";meta.textContent=place.category+" · "+place.lat.toFixed(4)+", "+place.lng.toFixed(4)+(place.notes?" · "+place.notes:"");
   actions.className="saved-place-actions";open.className="text-button";open.textContent="Show on map";open.addEventListener("click",()=>{showView("map");setTimeout(()=>{initMap();mapInstance.setView([place.lat,place.lng],15);},100);});
   remove.className="text-button";remove.textContent="Delete";remove.addEventListener("click",()=>{savePlaces(loadPlaces().filter(p=>p.id!==place.id));renderPlaces();drawMarkers();});
-  actions.append(open,remove);li.append(title,meta,actions);list.append(li);
+  actions.append(open,remove);li.append(pickLabel,title,meta,actions);list.append(li);
  });
 }
 function drawMarkers(){
@@ -142,9 +142,9 @@ function loadFinds(){try{const a=JSON.parse(localStorage.getItem(FINDS_KEY)||"[]
 function saveFinds(a){localStorage.setItem(FINDS_KEY,JSON.stringify(a))}
 function grams(v){return (Number(v)||0).toLocaleString("en-GB",{maximumFractionDigits:3})+" g"}
 function findEstimate(m,p,w){const spot=m==="gold"?goldPerGram:m==="silver"?silverPerGram:null;const factor=m==="gold"?goldPurities.find(x=>x[0]===p)?.[1]:m==="silver"?silverPurities.find(x=>x[0]===p)?.[1]:null;return spot!==null&&factor&&Number(w)>0?Number(w)*factor*spot:null}
-function updateFindPurities(){const m=document.getElementById("find-metal").value,s=document.getElementById("find-purity"),a=m==="gold"?goldPurities:m==="silver"?silverPurities:[];s.innerHTML=a.length?a.map(x=>"<option>"+x[0]+"</option>").join(""):'<option value="">Not applicable</option>';updateFindEstimate()}
-function updateFindEstimate(){const v=findEstimate(document.getElementById("find-metal").value,document.getElementById("find-purity").value,document.getElementById("find-weight").value);document.getElementById("find-estimate").textContent=v===null?"No live estimate available; enter a manual value if known.":"Live spot estimate: "+money(v)+" before dealer deductions.";const input=document.getElementById("find-value");if(!document.getElementById("find-id").value&&v!==null&&!input.dataset.manual)input.value=v.toFixed(2)}
-document.getElementById("find-metal").addEventListener("change",updateFindPurities);["find-purity","find-weight"].forEach(id=>document.getElementById(id).addEventListener("input",updateFindEstimate));document.getElementById("find-value").addEventListener("input",()=>document.getElementById("find-value").dataset.manual="1");
+function updateFindPurities(){return;}
+function updateFindEstimate(){return;}
+document.getElementById("find-value").addEventListener("input",()=>document.getElementById("find-value").dataset.manual="1");
 function resizePhoto(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const i=new Image();i.onerror=reject;i.onload=()=>{const scale=Math.min(1,1000/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=Math.round(i.width*scale);c.height=Math.round(i.height*scale);c.getContext("2d").drawImage(i,0,0,c.width,c.height);resolve(c.toDataURL("image/jpeg",.78))};i.src=r.result};r.readAsDataURL(file)})}
 document.getElementById("find-photo").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{draftPhoto=await resizePhoto(f);const p=document.getElementById("find-photo-preview");p.src=draftPhoto;p.hidden=false}catch{alert("Could not load that photo.")}});
 function resetFindForm(){document.getElementById("find-form").reset();document.getElementById("find-id").value="";document.getElementById("find-date").value=new Date().toISOString().slice(0,10);document.getElementById("find-form-title").textContent="Add a find";document.getElementById("save-find-button").textContent="Save find";document.getElementById("cancel-find-edit").hidden=true;document.getElementById("find-photo-preview").hidden=true;document.getElementById("find-value").dataset.manual="";draftPhoto="";updateFindPurities()}
@@ -162,4 +162,18 @@ function downloadCsv(){const keys=["name","category","date","owner","metal","pur
 document.getElementById("export-finds-csv").addEventListener("click",downloadCsv);document.getElementById("download-finds-csv").addEventListener("click",downloadCsv);
 document.getElementById("download-backup").addEventListener("click",()=>downloadFile("treasure-group-backup.json","application/json",JSON.stringify({format:"treasure-group-backup",version:1,finds:loadFinds(),places:loadPlaces()},null,2)));
 document.getElementById("restore-form").addEventListener("submit",async e=>{e.preventDefault();try{const d=JSON.parse(await document.getElementById("restore-file").files[0].text());if(d.format!=="treasure-group-backup"||!Array.isArray(d.finds)||!Array.isArray(d.places))throw Error("Not a valid Treasure Group backup");saveFinds(d.finds);savePlaces(d.places);renderFinds();renderPlaces();drawMarkers();document.getElementById("restore-message").textContent="Backup restored."}catch(err){document.getElementById("restore-message").textContent=err.message}});
-document.getElementById("find-owner").value=sessionStorage.getItem(ACCESS_SESSION_KEY)||"Logan";document.getElementById("find-date").value=new Date().toISOString().slice(0,10);updateFindPurities();renderFinds();
+document.getElementById("find-owner").value=sessionStorage.getItem(ACCESS_SESSION_KEY)||"Logan";document.getElementById("find-date").value=new Date().toISOString().slice(0,10);renderFinds();
+
+
+function updateRouteMessage(){const count=selectedRouteStops.size;document.getElementById("route-message").textContent=count<2?"Choose at least two stops ("+count+" selected).":count+" stops selected. Google Maps will open your route."}
+document.getElementById("select-all-stops").addEventListener("click",()=>{loadPlaces().forEach(p=>selectedRouteStops.add(p.id));renderPlaces();updateRouteMessage()});
+document.getElementById("create-route").addEventListener("click",()=>{
+ const chosen=loadPlaces().filter(p=>selectedRouteStops.has(p.id));
+ if(chosen.length<2){document.getElementById("route-message").textContent="Please tick at least two saved waypoints.";return}
+ const limited=chosen.slice(0,10);
+ const origin=limited[0],destination=limited[limited.length-1],waypoints=limited.slice(1,-1).map(p=>p.lat+","+p.lng);
+ const params=new URLSearchParams({api:"1",origin:origin.lat+","+origin.lng,destination:destination.lat+","+destination.lng,travelmode:"driving"});
+ if(waypoints.length)params.set("waypoints",waypoints.join("|"));
+ window.open("https://www.google.com/maps/dir/?"+params.toString(),"_blank","noopener,noreferrer");
+ document.getElementById("route-message").textContent=limited.length<chosen.length?"Opened first 10 selected stops. Create another route for the remaining stops.":"Route opened in Google Maps.";
+});
