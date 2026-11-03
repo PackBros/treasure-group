@@ -34,7 +34,7 @@ function renderPrices(){
  updateCalculatorFeed();
 }
 async function fetchMetal(symbol){
- const response=await fetch(`https://gold-api.com/price/${symbol}/GBP`,{cache:"no-store"});
+ const response=await fetch(`https://api.gold-api.com/price/${symbol}/GBP`,{cache:"no-store"});
  if(!response.ok)throw new Error(`${symbol} request failed (${response.status})`);
  const data=await response.json();
  const perOunce=Number(data.price);
