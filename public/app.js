@@ -1,3 +1,12 @@
+
+// Prevent accidental browser zoom gestures; Leaflet keeps its own map zoom controls.
+document.addEventListener("wheel",event=>{if(event.ctrlKey||event.metaKey)event.preventDefault();},{passive:false});
+document.addEventListener("keydown",event=>{
+ if((event.ctrlKey||event.metaKey)&&(["+","=","-","0"].includes(event.key)))event.preventDefault();
+});
+document.addEventListener("touchmove",event=>{
+ if(event.touches&&event.touches.length>1&&!event.target.closest("#map-canvas"))event.preventDefault();
+},{passive:false});
 const ACCESS_CODE = "0925";
 const ACCESS_SESSION_KEY = "treasure-group-access-v1";
 function unlockApp(profile){
@@ -34,7 +43,7 @@ if(previousSession==="Logan"||previousSession==="Debbie")unlockApp(previousSessi
 
 const views=["dashboard","metals","calculator","map","finds","leaderboard","backup"];
 const titles={dashboard:"Overview",metals:"Metal prices",calculator:"Scrap calculator",map:"Your map",finds:"Finds",leaderboard:"Leaderboard"};
-let goldPerGram=null,silverPerGram=null,goldUpdated=null,silverUpdated=null,mapInstance=null,selectedPoint=null,markers=[],streetLayer=null,satelliteLayer=null;
+let goldPerGram=null,silverPerGram=null,goldUpdated=null,silverUpdated=null,mapInstance=null,selectedPoint=null,markers=[],streetLayer=null,satelliteLayer=null,previewMarker=null;
 const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
 const goldPurities=[["9ct",9/24],["14ct",14/24],["16ct",16/24],["18ct",18/24],["22ct",22/24],["24ct",1]];
 const silverPurities=[["999",.999],["925",.925],["800",.8]];
@@ -135,13 +144,13 @@ function initMap(){
  document.getElementById("map-satellite").addEventListener("click",()=>{if(mapInstance.hasLayer(streetLayer))mapInstance.removeLayer(streetLayer);satelliteLayer.addTo(mapInstance);document.getElementById("map-satellite").classList.add("active");document.getElementById("map-streets").classList.remove("active");});
  document.getElementById("map-street-view").addEventListener("click",()=>{const point=selectedPoint||mapInstance.getCenter();const url="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint="+point.lat+","+point.lng;window.open(url,"_blank","noopener,noreferrer");});
 
- mapInstance.on("click",event=>{selectedPoint=event.latlng;document.getElementById("map-street-view").disabled=false;document.getElementById("place-coords").textContent="Selected: "+selectedPoint.lat.toFixed(5)+", "+selectedPoint.lng.toFixed(5);document.getElementById("place-name").focus();});
+ mapInstance.on("click",event=>{selectedPoint=event.latlng;if(previewMarker)previewMarker.remove();previewMarker=L.marker(selectedPoint,{keyboard:false,zIndexOffset:1000}).addTo(mapInstance);previewMarker.bindPopup("<strong>New waypoint location</strong><br>Save this spot using the form.").openPopup();document.getElementById("map-street-view").disabled=false;document.getElementById("place-coords").textContent="📍 Pin placed: "+selectedPoint.lat.toFixed(5)+", "+selectedPoint.lng.toFixed(5);document.getElementById("place-name").focus();});
  drawMarkers();renderPlaces();
 }
 document.getElementById("place-form").addEventListener("submit",event=>{
  event.preventDefault();if(!selectedPoint){document.getElementById("place-coords").textContent="Please click the map first to choose a location.";return;}
  const place={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name:document.getElementById("place-name").value.trim(),category:document.getElementById("place-category").value,notes:document.getElementById("place-notes").value.trim(),lat:selectedPoint.lat,lng:selectedPoint.lng};
- if(!place.name)return;const places=loadPlaces();places.push(place);savePlaces(places);document.getElementById("place-form").reset();document.getElementById("place-coords").textContent="Saved. Click the map to choose another location.";selectedPoint=null;document.getElementById("map-street-view").disabled=true;renderPlaces();drawMarkers();
+ if(!place.name)return;const places=loadPlaces();places.push(place);savePlaces(places);document.getElementById("place-form").reset();document.getElementById("place-coords").textContent="Saved. Click the map to choose another location.";selectedPoint=null;if(previewMarker){previewMarker.remove();previewMarker=null;}document.getElementById("map-street-view").disabled=true;renderPlaces();drawMarkers();
 });
 refreshPrices();setInterval(refreshPrices,30000);
 
