@@ -44,7 +44,14 @@
       <div class="tables-grid"><div><h3>Gold</h3><table><thead><tr><th>Purity</th><th>Pure gold</th><th>Value / g</th></tr></thead><tbody id="gold-values"><tr><td colspan="3">Waiting for price feed</td></tr></tbody></table></div>
       <div><h3>Silver</h3><table><thead><tr><th>Purity</th><th>Silver content</th><th>Value / g</th></tr></thead><tbody id="silver-values"><tr><td colspan="3">Waiting for price feed</td></tr></tbody></table></div></div>
     </div>
-    <div class="quick-links"><button class="panel quick-link" data-go="calculator"><strong>Scrap calculator</strong><span>Calculate an item's estimated value →</span></button><button class="panel quick-link" data-go="map"><strong>Open your map</strong><span>Save charity shops and other places →</span></button></div>
+    <div class="dashboard-tiles">
+<button class="dashboard-tile" data-go="map"><span class="tile-icon">📍</span><strong>Map & routes</strong><small>Save charity shops and plan a day out</small></button>
+<button class="dashboard-tile" data-go="finds"><span class="tile-icon">💎</span><strong>Finds journal</strong><small>Quickly record what you've found</small></button>
+<button class="dashboard-tile" data-go="metals"><span class="tile-icon">🪙</span><strong>Metal prices</strong><small>Live gold and silver values</small></button>
+<button class="dashboard-tile" data-go="calculator"><span class="tile-icon">🧮</span><strong>Scrap calculator</strong><small>Estimate jewellery and scrap value</small></button>
+<button class="dashboard-tile" data-go="leaderboard"><span class="tile-icon">🏆</span><strong>Leaderboard</strong><small>Logan vs Debbie</small></button>
+<button class="dashboard-tile" data-go="backup"><span class="tile-icon">💾</span><strong>Backup</strong><small>Save or restore your hobby records</small></button>
+</div>
     <p class="footnote">Prices are indicative spot references, not guaranteed dealer offers. Gold API provides the live spot feed. Values are calculated from metal purity and may differ from tested scrap payouts.</p>
   </section>
 
@@ -80,15 +87,16 @@
     <div class="map-layout">
       <div class="panel map-panel"><div class="map-controls"><button class="button secondary map-layer active" id="map-streets" type="button">Street map</button><button class="button secondary map-layer" id="map-satellite" type="button">Satellite</button><button class="button secondary" id="map-street-view" type="button" disabled>Street View at selected point</button></div><div id="map-canvas" aria-label="Interactive map"></div><p class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></p></div>
       <aside class="panel map-sidebar">
-        <h2>Add a place</h2><form id="place-form">
-          <label>Place name<input id="place-name" maxlength="90" placeholder="e.g. Riverside charity shop" required></label>
-          <label>Category<select id="place-category"><option>Charity shop</option><option>Car boot sale</option><option>Antiques shop</option><option>Junk shop</option><option>Market</option><option>Other</option></select></label>
-          <label>Notes<textarea id="place-notes" rows="2" placeholder="Opening times, good finds, useful notes…"></textarea></label>
-          <div class="coords" id="place-coords">Click the map to choose a location.</div>
-          <button class="button primary" type="submit">Save location</button>
-        </form>
-        <div class="saved-heading"><h2>Saved locations</h2><span id="place-count" class="muted small">0</span></div><ul id="saved-places" class="saved-places"><li class="muted">No places saved yet.</li></ul>
-      </aside>
+<h2>Add a waypoint</h2><p class="muted small">Tap the map, give the place a name, then save it.</p>
+<form id="place-form"><label>Place name<input id="place-name" maxlength="90" placeholder="e.g. Oxfam charity shop" required></label>
+<input id="place-category" type="hidden" value="Charity shop"><textarea id="place-notes" rows="1" placeholder="Optional note"></textarea>
+<div class="coords" id="place-coords">Tap the map to drop a pin.</div><button class="button primary" type="submit">＋ Add waypoint</button></form>
+<div class="saved-heading"><h2>Your waypoints</h2><span id="place-count" class="muted small">0</span></div>
+<p class="muted small">Tick the stops you want to visit, then create a route.</p>
+<div class="route-actions"><button class="button primary" id="create-route" type="button">Create Google Maps route</button><button class="button secondary" id="select-all-stops" type="button">Select all</button></div>
+<p id="route-message" class="muted small">Choose at least two stops for a route.</p>
+<ul id="saved-places" class="saved-places"><li class="muted">No waypoints yet.</li></ul>
+</aside>
     </div>
     <p class="footnote">This first map version saves pins in this browser only. Account-based private/shared maps will be added when login and database features are built. OpenStreetMap standard tiles are community-funded; use normally, keep attribution visible and do not bulk-download tiles.</p>
   </section>
@@ -96,14 +104,16 @@
   <section class="view" id="finds">
 <div class="page-intro"><div><p class="eyebrow">YOUR TREASURE JOURNAL</p><h1>Finds</h1><p class="muted">Log discoveries, add photos, track weights and notes.</p></div><button class="button secondary" id="export-finds-csv">Export CSV</button></div>
 <div class="stats-grid"><article class="panel stat-card"><span>Total finds</span><strong id="find-stat-count">0</strong></article><article class="panel stat-card"><span>Combined weight</span><strong id="find-stat-weight">0 g</strong></article><article class="panel stat-card"><span>Estimated value</span><strong id="find-stat-value">£0.00</strong></article><article class="panel stat-card"><span>Best find</span><strong id="find-stat-best">—</strong></article></div>
-<div class="finds-layout"><form class="panel form-panel find-form" id="find-form"><div class="form-title"><h2 id="find-form-title">Add a find</h2><button class="text-button" id="cancel-find-edit" type="button" hidden>Cancel edit</button></div><input id="find-id" type="hidden">
-<div class="form-two"><label>Find name *<input id="find-name" maxlength="100" required placeholder="e.g. Silver bracelet"></label><label>Category<select id="find-category"><option>Jewellery</option><option>Coins</option><option>Antique</option><option>Metal detecting</option><option>Collectable</option><option>Other</option></select></label></div>
-<div class="form-two"><label>Date found *<input id="find-date" type="date" required></label><label>Found by<select id="find-owner"><option>Logan</option><option>Debbie</option></select></label></div>
-<div class="form-two"><label>Metal<select id="find-metal"><option value="none">Not applicable</option><option value="gold">Gold</option><option value="silver">Silver</option></select></label><label>Purity<select id="find-purity"><option value="">Choose metal first</option></select></label></div>
-<div class="form-two"><label>Weight (grams)<input id="find-weight" type="number" min="0" step="0.001"></label><label>Estimated value (£)<input id="find-value" type="number" min="0" step="0.01"></label></div>
-<div class="form-two"><label>Purchase cost (£)<input id="find-cost" type="number" min="0" step="0.01"></label><label>Where found<input id="find-location" maxlength="120" placeholder="Shop, beach, field…"></label></div>
-<label>Photo<input id="find-photo" type="file" accept="image/*"><span class="muted small">Optional; resized before saving.</span></label><img id="find-photo-preview" class="find-photo-preview" alt="Find preview" hidden>
-<label>Notes<textarea id="find-notes" rows="3" maxlength="1500" placeholder="Condition, hallmarks, story, research…"></textarea></label><div class="find-estimate" id="find-estimate">Choose metal, purity and weight for a live spot estimate.</div><button class="button primary" type="submit" id="save-find-button">Save find</button></form>
+<div class="finds-layout"><form class="panel form-panel find-form simple-find-form" id="find-form">
+<h2 id="find-form-title">Add a find</h2><input id="find-id" type="hidden">
+<label>What did you find? *<input id="find-name" maxlength="100" required placeholder="e.g. Silver ring"></label>
+<div class="form-two"><label>Found by<select id="find-owner"><option>Logan</option><option>Debbie</option></select></label><label>Date<input id="find-date" type="date" required></label></div>
+<label>Estimated value (£) <input id="find-value" type="number" min="0" step="0.01" placeholder="Optional"></label>
+<label>Photo (optional)<input id="find-photo" type="file" accept="image/*"></label><img id="find-photo-preview" class="find-photo-preview" alt="Find preview" hidden>
+<label>Quick note (optional)<textarea id="find-notes" rows="2" maxlength="1000" placeholder="Anything worth remembering…"></textarea></label>
+<input id="find-category" type="hidden" value="Other"><input id="find-metal" type="hidden" value="none"><input id="find-purity" type="hidden" value=""><input id="find-weight" type="hidden" value=""><input id="find-cost" type="hidden" value=""><input id="find-location" type="hidden" value="">
+<button class="button primary" type="submit" id="save-find-button">Save find</button><button class="button secondary" id="cancel-find-edit" type="button" hidden>Cancel edit</button>
+</form>
 <div class="find-list-column"><div class="panel filters-panel"><input id="find-search" type="search" placeholder="Search finds, notes or locations…"><div class="form-two"><select id="find-filter-category"><option value="">All categories</option><option>Jewellery</option><option>Coins</option><option>Antique</option><option>Metal detecting</option><option>Collectable</option><option>Other</option></select><select id="find-filter-owner"><option value="">Everyone</option><option>Logan</option><option>Debbie</option></select></div><div class="form-two"><select id="find-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="value">Highest value</option><option value="weight">Heaviest</option><option value="name">Name A–Z</option></select><button class="button secondary" id="clear-find-filters">Clear filters</button></div></div><div class="find-list-heading"><h2>Finds collection</h2><span class="muted small" id="find-results-count">0 results</span></div><div id="find-list" class="find-list"></div></div></div></section>
 <section class="view" id="leaderboard"><div class="page-intro"><div><p class="eyebrow">A LITTLE FRIENDLY COMPETITION</p><h1>Leaderboard</h1><p class="muted">Compare discoveries and celebrate each other's best finds.</p></div></div><div class="panel leaderboard-panel"><div class="panel-heading"><div><h2>Group standings</h2><p class="muted">Based on finds saved in this browser.</p></div><select id="leaderboard-metric"><option value="count">Most finds</option><option value="value">Highest estimated value</option><option value="weight">Most total weight</option></select></div><div id="leaderboard-content" class="leaderboard-content"></div></div><div class="stats-grid"><article class="panel stat-card"><span>Group finds</span><strong id="leader-total-finds">0</strong></article><article class="panel stat-card"><span>Group estimated value</span><strong id="leader-total-value">£0.00</strong></article><article class="panel stat-card"><span>Group weight</span><strong id="leader-total-weight">0 g</strong></article></div></section>
 <section class="view" id="backup"><div class="page-intro"><div><p class="eyebrow">KEEP YOUR RECORDS SAFE</p><h1>Backup & restore</h1><p class="muted">Move finds and map pins between devices.</p></div></div><div class="backup-grid"><div class="panel form-panel"><h2>Download backup</h2><p class="muted">Includes finds, photos and saved map places.</p><button class="button primary" id="download-backup">Download full backup</button><button class="button secondary" id="download-finds-csv">Download finds CSV</button></div><form class="panel form-panel" id="restore-form"><h2>Restore backup</h2><p class="muted">Restoring replaces records in this browser.</p><input id="restore-file" type="file" accept="application/json,.json" required><label class="confirm-restore"><input id="confirm-restore" type="checkbox" required> I understand this replaces my current records.</label><button class="button secondary" type="submit">Restore backup</button><p id="restore-message" class="muted small"></p></form></div><p class="footnote">Data is stored in this browser, not automatically shared between devices. Download a backup to transfer it to another device.</p></section>
