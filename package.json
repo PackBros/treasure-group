@@ -1,0 +1,16 @@
+{
+  "name": "treasure-group",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Treasure Group precious metals, scrap calculator, maps and finds community",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
