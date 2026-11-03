@@ -106,7 +106,7 @@ function renderPlaces(){
   const li=document.createElement("li"),title=document.createElement("div"),meta=document.createElement("div"),actions=document.createElement("div"),open=document.createElement("button"),remove=document.createElement("button"),pick=document.createElement("input"),pickLabel=document.createElement("label");
   title.className="saved-place-title";title.textContent=place.name;pick.type="checkbox";pick.className="route-stop-check";pick.value=place.id;pick.checked=selectedRouteStops.has(place.id);pick.addEventListener("change",()=>{pick.checked?selectedRouteStops.add(place.id):selectedRouteStops.delete(place.id);updateRouteMessage()});pickLabel.className="route-stop-label";pickLabel.append(pick,document.createTextNode(" Add to route"));meta.className="saved-place-meta";meta.textContent=place.category+" · "+place.lat.toFixed(4)+", "+place.lng.toFixed(4)+(place.notes?" · "+place.notes:"");
   actions.className="saved-place-actions";open.className="text-button";open.textContent="Show on map";open.addEventListener("click",()=>{showView("map");setTimeout(()=>{initMap();mapInstance.setView([place.lat,place.lng],15);},100);});
-  remove.className="text-button";remove.textContent="Delete";remove.addEventListener("click",()=>{savePlaces(loadPlaces().filter(p=>p.id!==place.id));renderPlaces();drawMarkers();});
+  remove.className="text-button";remove.textContent="Delete";remove.addEventListener("click",()=>{savePlaces(loadPlaces().filter(p=>p.id!==place.id));selectedRouteStops.delete(place.id);renderPlaces();drawMarkers();updateRouteMessage();});
   actions.append(open,remove);li.append(pickLabel,title,meta,actions);list.append(li);
  });
 }
