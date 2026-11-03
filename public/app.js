@@ -7,7 +7,7 @@ document.addEventListener("keydown",event=>{
 document.addEventListener("touchmove",event=>{
  if(event.touches&&event.touches.length>1&&!event.target.closest("#map-canvas"))event.preventDefault();
 },{passive:false});
-const ACCESS_CODE = "0925";
+const ACCESS_CODE = "925";
 const ACCESS_SESSION_KEY = "treasure-group-access-v1";
 function unlockApp(profile){
  document.getElementById("access-screen").hidden=true;
