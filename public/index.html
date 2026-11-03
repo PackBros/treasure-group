@@ -8,8 +8,22 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 <body>
+<section id="access-screen" class="access-screen">
+  <form id="access-form" class="access-card">
+    <div class="brand-mark access-mark">TG</div>
+    <p class="eyebrow">PRIVATE GROUP SPACE</p>
+    <h1>Welcome to Treasure Group</h1>
+    <p class="muted">Enter the group code and choose your profile.</p>
+    <label>Access code<input id="access-code" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter access code" required></label>
+    <label>Your name<select id="access-profile" required><option value="">Choose your profile</option><option value="Logan">Logan</option><option value="Debbie">Debbie</option></select></label>
+    <button class="button primary" type="submit">Enter Treasure Group</button>
+    <p id="access-error" class="access-error" role="alert"></p>
+    <p class="access-disclaimer">Basic shared-code access only. This is not secure authentication; do not store sensitive information here.</p>
+  </form>
+</section>
+<div id="app-shell" hidden>
 <header class="site-header">
-  <a class="brand" href="#" data-go="dashboard"><span class="brand-mark">TG</span><span>Treasure Group</span></a>
+  <a class="brand" href="#" data-go="dashboard"><span class="brand-mark">TG</span><span>Treasure Group</span></a><div class="user-tools"><span id="current-user">Signed in</span><span class="admin-label">Admin</span><button id="sign-out" class="text-button">Sign out</button></div>
   <nav class="main-nav" aria-label="Main navigation">
     <button class="nav-link active" data-view="dashboard">Overview</button>
     <button class="nav-link" data-view="metals">Metal prices</button>
@@ -21,7 +35,7 @@
 </header>
 <main class="main">
   <section class="view active" id="dashboard">
-    <div class="page-intro"><div><p class="eyebrow">YOUR PERSONAL TREASURE TOOLKIT</p><h1>Overview</h1><p class="muted">Metal prices, scrap calculations and places worth visiting.</p></div><span id="market-status" class="status">Loading prices…</span></div>
+    <div class="page-intro"><div><p class="eyebrow">YOUR PERSONAL TREASURE TOOLKIT</p><h1>Overview</h1><p class="muted">Metal prices, scrap calculations and places worth visiting.</p></div><div class="market-meta"><span id="market-status" class="status">Loading prices…</span><span id="market-last-updated" class="updated prominent-updated">Last updated: waiting for feed</span></div></div>
     <div class="price-cards">
       <article class="panel price-card"><div class="card-heading"><span>Gold spot</span><span class="metal-symbol">Au</span></div><div class="price-value" id="gold-spot">—</div><div class="muted">GBP per gram · 24ct reference</div><div class="updated" id="gold-updated">Waiting for price feed</div></article>
       <article class="panel price-card"><div class="card-heading"><span>Silver spot</span><span class="metal-symbol silver-symbol">Ag</span></div><div class="price-value" id="silver-spot">—</div><div class="muted">GBP per gram · 999 reference</div><div class="updated" id="silver-updated">Waiting for price feed</div></article>
@@ -64,7 +78,7 @@
   <section class="view" id="map">
     <div class="page-intro"><div><p class="eyebrow">SAVED PLACES</p><h1>Your map</h1><p class="muted">Click anywhere on the map to choose a spot, then save it to your list.</p></div><span class="status">OpenStreetMap · no key required</span></div>
     <div class="map-layout">
-      <div class="panel map-panel"><div id="map-canvas" aria-label="Interactive map"></div><p class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></p></div>
+      <div class="panel map-panel"><div class="map-controls"><button class="button secondary map-layer active" id="map-streets" type="button">Street map</button><button class="button secondary map-layer" id="map-satellite" type="button">Satellite</button><button class="button secondary" id="map-street-view" type="button" disabled>Street View at selected point</button></div><div id="map-canvas" aria-label="Interactive map"></div><p class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></p></div>
       <aside class="panel map-sidebar">
         <h2>Add a place</h2><form id="place-form">
           <label>Place name<input id="place-name" maxlength="90" placeholder="e.g. Riverside charity shop" required></label>
@@ -83,6 +97,7 @@
   <section class="view" id="leaderboard"><div class="page-intro"><div><p class="eyebrow">COMMUNITY</p><h1>Leaderboard</h1><p class="muted">Community rankings will be added after accounts and shared finds.</p></div></div><div class="panel placeholder"><h2>Leaderboard coming next</h2><p>Rank by number of finds and total estimated value, with privacy controls.</p></div></section>
   <footer>Treasure Group · Simple tools for better finds.</footer>
 </main>
+</div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="/app.js"></script>
 </body></html>
