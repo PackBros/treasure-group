@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#ffffff"><meta name="description" content="Treasure Group — metal prices, scrap calculator and treasure maps">
-<title>Treasure Group</title>
+<title> </title>
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
@@ -12,7 +12,7 @@
   <form id="access-form" class="access-card">
     <div class="brand-mark access-mark">TG</div>
     <p class="eyebrow">PRIVATE GROUP SPACE</p>
-    <h1>Welcome to Treasure Group</h1>
+    <h1>Sign in</h1>
     <p class="muted">Enter the group code and choose your profile.</p>
     <label>Access code<input id="access-code" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter access code" required></label>
     <label>Your name<select id="access-profile" required><option value="">Choose your profile</option><option value="Logan">Logan</option><option value="Debbie">Debbie</option></select></label>
@@ -23,14 +23,14 @@
 </section>
 <div id="app-shell" hidden>
 <header class="site-header">
-  <a class="brand" href="#" data-go="dashboard"><span class="brand-mark">TG</span><span>Treasure Group</span></a><div class="user-tools"><span id="current-user">Signed in</span><span class="admin-label">Admin</span><button id="sign-out" class="text-button">Sign out</button></div>
+  <a class="brand" href="#" data-go="dashboard"><span class="brand-mark">TG</span></a><div class="user-tools"><span id="current-user">Signed in</span><span class="admin-label">Admin</span><button id="sign-out" class="text-button">Sign out</button></div>
   <nav class="main-nav" aria-label="Main navigation">
     <button class="nav-link active" data-view="dashboard">Overview</button>
     <button class="nav-link" data-view="metals">Metal prices</button>
     <button class="nav-link" data-view="calculator">Scrap calculator</button>
     <button class="nav-link" data-view="map">Map</button>
     <button class="nav-link" data-view="finds">Finds</button>
-    <button class="nav-link" data-view="leaderboard">Leaderboard</button>
+    <button class="nav-link" data-view="leaderboard">Leaderboard</button><button class="nav-link" data-view="backup">Backup</button>
   </nav>
 </header>
 <main class="main">
@@ -93,8 +93,20 @@
     <p class="footnote">This first map version saves pins in this browser only. Account-based private/shared maps will be added when login and database features are built. OpenStreetMap standard tiles are community-funded; use normally, keep attribution visible and do not bulk-download tiles.</p>
   </section>
 
-  <section class="view" id="finds"><div class="page-intro"><div><p class="eyebrow">YOUR DISCOVERIES</p><h1>Finds</h1><p class="muted">Your finds log will be added next.</p></div></div><div class="panel placeholder"><h2>Finds log coming next</h2><p>We'll add photos, dates, notes, weights and estimated values.</p></div></section>
-  <section class="view" id="leaderboard"><div class="page-intro"><div><p class="eyebrow">COMMUNITY</p><h1>Leaderboard</h1><p class="muted">Community rankings will be added after accounts and shared finds.</p></div></div><div class="panel placeholder"><h2>Leaderboard coming next</h2><p>Rank by number of finds and total estimated value, with privacy controls.</p></div></section>
+  <section class="view" id="finds">
+<div class="page-intro"><div><p class="eyebrow">YOUR TREASURE JOURNAL</p><h1>Finds</h1><p class="muted">Log discoveries, add photos, track weights and notes.</p></div><button class="button secondary" id="export-finds-csv">Export CSV</button></div>
+<div class="stats-grid"><article class="panel stat-card"><span>Total finds</span><strong id="find-stat-count">0</strong></article><article class="panel stat-card"><span>Combined weight</span><strong id="find-stat-weight">0 g</strong></article><article class="panel stat-card"><span>Estimated value</span><strong id="find-stat-value">£0.00</strong></article><article class="panel stat-card"><span>Best find</span><strong id="find-stat-best">—</strong></article></div>
+<div class="finds-layout"><form class="panel form-panel find-form" id="find-form"><div class="form-title"><h2 id="find-form-title">Add a find</h2><button class="text-button" id="cancel-find-edit" type="button" hidden>Cancel edit</button></div><input id="find-id" type="hidden">
+<div class="form-two"><label>Find name *<input id="find-name" maxlength="100" required placeholder="e.g. Silver bracelet"></label><label>Category<select id="find-category"><option>Jewellery</option><option>Coins</option><option>Antique</option><option>Metal detecting</option><option>Collectable</option><option>Other</option></select></label></div>
+<div class="form-two"><label>Date found *<input id="find-date" type="date" required></label><label>Found by<select id="find-owner"><option>Logan</option><option>Debbie</option></select></label></div>
+<div class="form-two"><label>Metal<select id="find-metal"><option value="none">Not applicable</option><option value="gold">Gold</option><option value="silver">Silver</option></select></label><label>Purity<select id="find-purity"><option value="">Choose metal first</option></select></label></div>
+<div class="form-two"><label>Weight (grams)<input id="find-weight" type="number" min="0" step="0.001"></label><label>Estimated value (£)<input id="find-value" type="number" min="0" step="0.01"></label></div>
+<div class="form-two"><label>Purchase cost (£)<input id="find-cost" type="number" min="0" step="0.01"></label><label>Where found<input id="find-location" maxlength="120" placeholder="Shop, beach, field…"></label></div>
+<label>Photo<input id="find-photo" type="file" accept="image/*"><span class="muted small">Optional; resized before saving.</span></label><img id="find-photo-preview" class="find-photo-preview" alt="Find preview" hidden>
+<label>Notes<textarea id="find-notes" rows="3" maxlength="1500" placeholder="Condition, hallmarks, story, research…"></textarea></label><div class="find-estimate" id="find-estimate">Choose metal, purity and weight for a live spot estimate.</div><button class="button primary" type="submit" id="save-find-button">Save find</button></form>
+<div class="find-list-column"><div class="panel filters-panel"><input id="find-search" type="search" placeholder="Search finds, notes or locations…"><div class="form-two"><select id="find-filter-category"><option value="">All categories</option><option>Jewellery</option><option>Coins</option><option>Antique</option><option>Metal detecting</option><option>Collectable</option><option>Other</option></select><select id="find-filter-owner"><option value="">Everyone</option><option>Logan</option><option>Debbie</option></select></div><div class="form-two"><select id="find-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="value">Highest value</option><option value="weight">Heaviest</option><option value="name">Name A–Z</option></select><button class="button secondary" id="clear-find-filters">Clear filters</button></div></div><div class="find-list-heading"><h2>Finds collection</h2><span class="muted small" id="find-results-count">0 results</span></div><div id="find-list" class="find-list"></div></div></div></section>
+<section class="view" id="leaderboard"><div class="page-intro"><div><p class="eyebrow">A LITTLE FRIENDLY COMPETITION</p><h1>Leaderboard</h1><p class="muted">Compare discoveries and celebrate each other's best finds.</p></div></div><div class="panel leaderboard-panel"><div class="panel-heading"><div><h2>Group standings</h2><p class="muted">Based on finds saved in this browser.</p></div><select id="leaderboard-metric"><option value="count">Most finds</option><option value="value">Highest estimated value</option><option value="weight">Most total weight</option></select></div><div id="leaderboard-content" class="leaderboard-content"></div></div><div class="stats-grid"><article class="panel stat-card"><span>Group finds</span><strong id="leader-total-finds">0</strong></article><article class="panel stat-card"><span>Group estimated value</span><strong id="leader-total-value">£0.00</strong></article><article class="panel stat-card"><span>Group weight</span><strong id="leader-total-weight">0 g</strong></article></div></section>
+<section class="view" id="backup"><div class="page-intro"><div><p class="eyebrow">KEEP YOUR RECORDS SAFE</p><h1>Backup & restore</h1><p class="muted">Move finds and map pins between devices.</p></div></div><div class="backup-grid"><div class="panel form-panel"><h2>Download backup</h2><p class="muted">Includes finds, photos and saved map places.</p><button class="button primary" id="download-backup">Download full backup</button><button class="button secondary" id="download-finds-csv">Download finds CSV</button></div><form class="panel form-panel" id="restore-form"><h2>Restore backup</h2><p class="muted">Restoring replaces records in this browser.</p><input id="restore-file" type="file" accept="application/json,.json" required><label class="confirm-restore"><input id="confirm-restore" type="checkbox" required> I understand this replaces my current records.</label><button class="button secondary" type="submit">Restore backup</button><p id="restore-message" class="muted small"></p></form></div><p class="footnote">Data is stored in this browser, not automatically shared between devices. Download a backup to transfer it to another device.</p></section>
   <footer>Treasure Group · Simple tools for better finds.</footer>
 </main>
 </div>
