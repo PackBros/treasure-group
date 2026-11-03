@@ -5,14 +5,21 @@ function unlockApp(profile){
  document.getElementById("app-shell").hidden=false;
  document.getElementById("current-user").textContent=profile;
 }
+function showLoginStep(step){
+ document.getElementById("login-pin-step").hidden=step!==1;
+ document.getElementById("login-person-step").hidden=step!==2;
+ document.getElementById("access-error").textContent="";
+}
 document.getElementById("access-form").addEventListener("submit",event=>{
  event.preventDefault();
- const code=document.getElementById("access-code").value;
+ if(document.getElementById("access-code").value!==ACCESS_CODE){document.getElementById("access-error").textContent="That PIN is not correct.";return;}
+ showLoginStep(2);
+});
+document.getElementById("back-to-pin").addEventListener("click",()=>showLoginStep(1));
+document.getElementById("finish-login").addEventListener("click",()=>{
  const profile=document.getElementById("access-profile").value;
- if(code!==ACCESS_CODE){document.getElementById("access-error").textContent="That access code is not correct.";return;}
  if(!profile){document.getElementById("access-error").textContent="Please choose Logan or Debbie.";return;}
  sessionStorage.setItem(ACCESS_SESSION_KEY,profile);
- document.getElementById("access-error").textContent="";
  unlockApp(profile);
 });
 document.getElementById("sign-out").addEventListener("click",()=>{
@@ -20,6 +27,7 @@ document.getElementById("sign-out").addEventListener("click",()=>{
  document.getElementById("app-shell").hidden=true;
  document.getElementById("access-screen").hidden=false;
  document.getElementById("access-form").reset();
+ showLoginStep(1);
 });
 const previousSession=sessionStorage.getItem(ACCESS_SESSION_KEY);
 if(previousSession==="Logan"||previousSession==="Debbie")unlockApp(previousSession);
