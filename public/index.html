@@ -36,14 +36,6 @@
 <main class="main">
   <section class="view active" id="dashboard">
     <div class="page-intro"><div><p class="eyebrow">YOUR PERSONAL TREASURE TOOLKIT</p><h1>Overview</h1><p class="muted">Metal prices, scrap calculations and places worth visiting.</p></div><div class="market-meta"><span id="market-status" class="status">Loading prices…</span><span id="market-last-updated" class="updated prominent-updated">Last updated: waiting for feed</span></div></div>
-    <div class="price-cards">
-      <article class="panel price-card"><div class="card-heading"><span>Gold spot</span><span class="metal-symbol">Au</span></div><div class="price-value" id="gold-spot">—</div><div class="muted">GBP per gram · 24ct reference</div><div class="updated" id="gold-updated">Waiting for price feed</div></article>
-      <article class="panel price-card"><div class="card-heading"><span>Silver spot</span><span class="metal-symbol silver-symbol">Ag</span></div><div class="price-value" id="silver-spot">—</div><div class="muted">GBP per gram · 999 reference</div><div class="updated" id="silver-updated">Waiting for price feed</div></article>
-    </div>
-    <div class="panel table-panel"><div class="panel-heading"><div><h2>Calculated metal values</h2><p class="muted">Theoretical value per gram, before dealer deductions.</p></div><span class="muted small" id="table-updated">—</span></div>
-      <div class="tables-grid"><div><h3>Gold</h3><table><thead><tr><th>Purity</th><th>Pure gold</th><th>Value / g</th></tr></thead><tbody id="gold-values"><tr><td colspan="3">Waiting for price feed</td></tr></tbody></table></div>
-      <div><h3>Silver</h3><table><thead><tr><th>Purity</th><th>Silver content</th><th>Value / g</th></tr></thead><tbody id="silver-values"><tr><td colspan="3">Waiting for price feed</td></tr></tbody></table></div></div>
-    </div>
     <div class="dashboard-tiles">
 <button class="dashboard-tile" data-go="map"><span class="tile-icon">📍</span><strong>Map & routes</strong><small>Save charity shops and plan a day out</small></button>
 <button class="dashboard-tile" data-go="finds"><span class="tile-icon">💎</span><strong>Finds journal</strong><small>Quickly record what you've found</small></button>
@@ -52,6 +44,15 @@
 <button class="dashboard-tile" data-go="leaderboard"><span class="tile-icon">🏆</span><strong>Leaderboard</strong><small>Logan vs Debbie</small></button>
 <button class="dashboard-tile" data-go="backup"><span class="tile-icon">💾</span><strong>Backup</strong><small>Save or restore your hobby records</small></button>
 </div>
+    <div class="price-cards">
+      <article class="panel price-card"><div class="card-heading"><span>Gold spot</span><span class="metal-symbol">Au</span></div><div class="price-value" id="gold-spot">—</div><div class="muted">GBP per gram · 24ct reference</div><div class="updated" id="gold-updated">Waiting for price feed</div></article>
+      <article class="panel price-card"><div class="card-heading"><span>Silver spot</span><span class="metal-symbol silver-symbol">Ag</span></div><div class="price-value" id="silver-spot">—</div><div class="muted">GBP per gram · 999 reference</div><div class="updated" id="silver-updated">Waiting for price feed</div></article>
+    </div>
+    <div class="panel table-panel"><div class="panel-heading"><div><h2>Calculated metal values</h2><p class="muted">Theoretical value per gram, before dealer deductions.</p></div><span class="muted small" id="table-updated">—</span></div>
+      <div class="tables-grid"><div><h3>Gold</h3><table><thead><tr><th>Purity</th><th>Pure gold</th><th>Value / g</th></tr></thead><tbody id="gold-values"><tr><td colspan="3">Waiting for price feed</td></tr></tbody></table></div>
+      <div><h3>Silver</h3><table><thead><tr><th>Purity</th><th>Silver content</th><th>Value / g</th></tr></thead><tbody id="silver-values"><tr><td colspan="3">Waiting for price feed</td></tr></tbody></table></div></div>
+    </div>
+
     <p class="footnote">Prices are indicative spot references, not guaranteed dealer offers. Gold API provides the live spot feed. Values are calculated from metal purity and may differ from tested scrap payouts.</p>
   </section>
 
