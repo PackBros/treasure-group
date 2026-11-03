@@ -96,7 +96,8 @@ document.getElementById("scrap-form").addEventListener("submit",event=>{
  document.getElementById("result").textContent=money(estimated);document.getElementById("raw-result").textContent=money(raw);document.getElementById("spot-result").textContent=money(spot*factor);document.getElementById("payout-result").textContent=payout+"%";
  document.getElementById("result-note").textContent=`${weight.toFixed(3)}g of ${puritySelect.value} ${metalSelect.value}.`;
 });
-const STORE_KEY="treasure-group-map-pins-v1";\nconst selectedRouteStops=new Set();
+const STORE_KEY="treasure-group-map-pins-v1";
+const selectedRouteStops=new Set();
 function loadPlaces(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||"[]");}catch{return [];}}
 function savePlaces(places){localStorage.setItem(STORE_KEY,JSON.stringify(places));}
 function renderPlaces(){
