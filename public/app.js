@@ -1,6 +1,32 @@
+const ACCESS_CODE = "0925";
+const ACCESS_SESSION_KEY = "treasure-group-access-v1";
+function unlockApp(profile){
+ document.getElementById("access-screen").hidden=true;
+ document.getElementById("app-shell").hidden=false;
+ document.getElementById("current-user").textContent=profile;
+}
+document.getElementById("access-form").addEventListener("submit",event=>{
+ event.preventDefault();
+ const code=document.getElementById("access-code").value;
+ const profile=document.getElementById("access-profile").value;
+ if(code!==ACCESS_CODE){document.getElementById("access-error").textContent="That access code is not correct.";return;}
+ if(!profile){document.getElementById("access-error").textContent="Please choose Logan or Debbie.";return;}
+ sessionStorage.setItem(ACCESS_SESSION_KEY,profile);
+ document.getElementById("access-error").textContent="";
+ unlockApp(profile);
+});
+document.getElementById("sign-out").addEventListener("click",()=>{
+ sessionStorage.removeItem(ACCESS_SESSION_KEY);
+ document.getElementById("app-shell").hidden=true;
+ document.getElementById("access-screen").hidden=false;
+ document.getElementById("access-form").reset();
+});
+const previousSession=sessionStorage.getItem(ACCESS_SESSION_KEY);
+if(previousSession==="Logan"||previousSession==="Debbie")unlockApp(previousSession);
+
 const views=["dashboard","metals","calculator","map","finds","leaderboard"];
 const titles={dashboard:"Overview",metals:"Metal prices",calculator:"Scrap calculator",map:"Your map",finds:"Finds",leaderboard:"Leaderboard"};
-let goldPerGram=null,silverPerGram=null,goldUpdated=null,silverUpdated=null,mapInstance=null,selectedPoint=null,markers=[];
+let goldPerGram=null,silverPerGram=null,goldUpdated=null,silverUpdated=null,mapInstance=null,selectedPoint=null,markers=[],streetLayer=null,satelliteLayer=null;
 const money=n=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
 const goldPurities=[["9ct",9/24],["14ct",14/24],["16ct",16/24],["18ct",18/24],["22ct",22/24],["24ct",1]];
 const silverPurities=[["999",.999],["925",.925],["800",.8]];
@@ -31,6 +57,8 @@ function renderPrices(){
  const status=document.getElementById("market-status");
  if(goldPerGram!==null&&silverPerGram!==null){status.textContent="Prices connected";status.className="status ok";document.getElementById("table-updated").textContent="Updated "+new Date(Math.min(new Date(goldUpdated),new Date(silverUpdated))).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});}
  else{status.textContent="Price feed unavailable";status.className="status error";document.getElementById("table-updated").textContent="Waiting for quotes";}
+ const latest=[goldUpdated,silverUpdated].filter(Boolean).map(value=>new Date(value)).sort((a,b)=>a-b)[0];
+ document.getElementById("market-last-updated").textContent=latest?"Last updated: "+latest.toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"medium",timeZone:"Europe/London"}):"Last updated: no successful quote yet";
  updateCalculatorFeed();
 }
 async function fetchMetal(symbol){
@@ -47,7 +75,7 @@ async function refreshPrices(){
  if(gold.status==="fulfilled"){goldPerGram=gold.value.perGram;goldUpdated=gold.value.updatedAt;}
  if(silver.status==="fulfilled"){silverPerGram=silver.value.perGram;silverUpdated=silver.value.updatedAt;}
  renderPrices();
- if(gold.status==="rejected"||silver.status==="rejected")status.title="One or more price requests failed. Last successful values are retained.";
+ if(gold.status==="rejected"||silver.status==="rejected"){status.title="One or more price requests failed. Last successful values are retained with their original update time.";status.textContent="Feed issue · showing last successful quote";status.className="status error";}
 }
 document.getElementById("refresh-prices").addEventListener("click",refreshPrices);
 const metalSelect=document.getElementById("metal"),puritySelect=document.getElementById("purity");
@@ -90,13 +118,19 @@ function initMap(){
  if(mapInstance){mapInstance.invalidateSize();return;}
  if(!window.L){document.getElementById("map-canvas").textContent="Map library could not be loaded. Check your connection and refresh.";return;}
  mapInstance=L.map("map-canvas").setView([52.2,-1.5],6);
- L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(mapInstance);
- mapInstance.on("click",event=>{selectedPoint=event.latlng;document.getElementById("place-coords").textContent="Selected: "+selectedPoint.lat.toFixed(5)+", "+selectedPoint.lng.toFixed(5);document.getElementById("place-name").focus();});
+ streetLayer=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'});
+ satelliteLayer=L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:'Tiles &copy; Esri'});
+ streetLayer.addTo(mapInstance);
+ document.getElementById("map-streets").addEventListener("click",()=>{if(mapInstance.hasLayer(satelliteLayer))mapInstance.removeLayer(satelliteLayer);streetLayer.addTo(mapInstance);document.getElementById("map-streets").classList.add("active");document.getElementById("map-satellite").classList.remove("active");});
+ document.getElementById("map-satellite").addEventListener("click",()=>{if(mapInstance.hasLayer(streetLayer))mapInstance.removeLayer(streetLayer);satelliteLayer.addTo(mapInstance);document.getElementById("map-satellite").classList.add("active");document.getElementById("map-streets").classList.remove("active");});
+ document.getElementById("map-street-view").addEventListener("click",()=>{const point=selectedPoint||mapInstance.getCenter();const url="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint="+point.lat+","+point.lng;window.open(url,"_blank","noopener,noreferrer");});
+
+ mapInstance.on("click",event=>{selectedPoint=event.latlng;document.getElementById("map-street-view").disabled=false;document.getElementById("place-coords").textContent="Selected: "+selectedPoint.lat.toFixed(5)+", "+selectedPoint.lng.toFixed(5);document.getElementById("place-name").focus();});
  drawMarkers();renderPlaces();
 }
 document.getElementById("place-form").addEventListener("submit",event=>{
  event.preventDefault();if(!selectedPoint){document.getElementById("place-coords").textContent="Please click the map first to choose a location.";return;}
  const place={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name:document.getElementById("place-name").value.trim(),category:document.getElementById("place-category").value,notes:document.getElementById("place-notes").value.trim(),lat:selectedPoint.lat,lng:selectedPoint.lng};
- if(!place.name)return;const places=loadPlaces();places.push(place);savePlaces(places);document.getElementById("place-form").reset();document.getElementById("place-coords").textContent="Saved. Click the map to choose another location.";selectedPoint=null;renderPlaces();drawMarkers();
+ if(!place.name)return;const places=loadPlaces();places.push(place);savePlaces(places);document.getElementById("place-form").reset();document.getElementById("place-coords").textContent="Saved. Click the map to choose another location.";selectedPoint=null;document.getElementById("map-street-view").disabled=true;renderPlaces();drawMarkers();
 });
 refreshPrices();setInterval(refreshPrices,30000);
