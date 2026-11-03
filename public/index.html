@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14231f">
+  <meta name="description" content="Treasure Group — precious metals, scrap values, maps and finds.">
+  <title>Treasure Group</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="Treasure Group home">
+        <span class="brand-mark">TG</span>
+        <span><strong>Treasure Group</strong><small>Find more. Know more.</small></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <button class="nav-link active" data-view="dashboard">⌂ <span>Dashboard</span></button>
+        <button class="nav-link" data-view="metals">◈ <span>Metal prices</span></button>
+        <button class="nav-link" data-view="calculator">▤ <span>Scrap calculator</span></button>
+        <button class="nav-link" data-view="map">⌖ <span>My map</span></button>
+        <button class="nav-link" data-view="finds">✧ <span>Finds</span></button>
+        <button class="nav-link" data-view="leaderboard">♛ <span>Leaderboard</span></button>
+      </nav>
+      <div class="sidebar-bottom"><span class="status-dot"></span> Your treasure hub</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><span class="eyebrow">YOUR PERSONAL TREASURE HUB</span><h1 id="page-title">Dashboard</h1></div>
+        <div class="profile"><span class="avatar">TG</span><span>My account</span></div>
+      </header>
+
+      <section class="view active" id="dashboard">
+        <div class="welcome-panel">
+          <div><span class="eyebrow light">WELCOME TO YOUR NEXT FIND</span><h2>Keep an eye on the market.<br>Keep track of the hunt.</h2><p>Your metals, locations and discoveries — all in one place.</p></div>
+          <div class="coin-art" aria-hidden="true">₿</div>
+        </div>
+        <div class="section-heading"><div><span class="eyebrow">MARKET WATCH</span><h2>Precious metals</h2></div><span class="pill muted">Live feed not connected yet</span></div>
+        <div class="metal-grid">
+          <article class="metal-card gold"><div class="card-top"><span>GOLD</span><span class="metal-icon">Au</span></div><strong>Waiting for feed</strong><small>GBP per gram · spot reference</small><div class="purities">9ct · 14ct · 16ct · 18ct · 22ct · 24ct</div></article>
+          <article class="metal-card silver"><div class="card-top"><span>SILVER</span><span class="metal-icon">Ag</span></div><strong>Waiting for feed</strong><small>GBP per gram · spot reference</small><div class="purities">999 · 925 · 800</div></article>
+        </div>
+        <div class="section-heading"><div><span class="eyebrow">QUICK TOOLS</span><h2>Pick up where you left off</h2></div></div>
+        <div class="quick-grid">
+          <button class="quick-card" data-go="calculator"><span>▤</span><strong>Scrap calculator</strong><small>Estimate a metal item's value</small></button>
+          <button class="quick-card" data-go="map"><span>⌖</span><strong>Explore your map</strong><small>Save shops and useful spots</small></button>
+          <button class="quick-card" data-go="finds"><span>✧</span><strong>Record a find</strong><small>Build your personal collection</small></button>
+        </div>
+        <p class="notice"><strong>Early build:</strong> this is the first working interface. Market prices, accounts, maps and shared community data will be connected in the next development stages. No placeholder numbers are presented as live prices.</p>
+      </section>
+
+      <section class="view" id="metals">
+        <div class="section-heading"><div><span class="eyebrow">MARKET WATCH</span><h2>Metal prices</h2></div><span class="pill muted">Feed pending</span></div>
+        <div class="metal-grid">
+          <article class="metal-card gold"><div class="card-top"><span>GOLD</span><span class="metal-icon">Au</span></div><strong>Not connected</strong><small>We will connect a market data provider and GBP conversion.</small><div class="purities">9ct · 14ct · 16ct · 18ct · 22ct · 24ct</div></article>
+          <article class="metal-card silver"><div class="card-top"><span>SILVER</span><span class="metal-icon">Ag</span></div><strong>Not connected</strong><small>We will calculate per-gram values from the silver spot price.</small><div class="purities">999 · 925 · 800</div></article>
+        </div>
+        <p class="notice">Spot prices and scrap buying prices are different. We will show the market reference separately from your configurable scrap payout estimate.</p>
+      </section>
+
+      <section class="view" id="calculator">
+        <div class="section-heading"><div><span class="eyebrow">VALUATION TOOL</span><h2>Scrap calculator</h2></div></div>
+        <div class="calculator-layout">
+          <form class="calculator-card" id="scrap-form">
+            <label>Metal<select id="metal"><option value="gold">Gold</option><option value="silver">Silver</option></select></label>
+            <label>Purity<select id="purity"></select></label>
+            <label>Item weight (grams)<input id="weight" type="number" min="0" step="0.01" placeholder="e.g. 12.5" required></label>
+            <label>Spot price (£ per gram of pure metal)<input id="spot" type="number" min="0" step="0.01" placeholder="Enter current spot price" required></label>
+            <label>Scrap payout (%)<input id="payout" type="number" min="0" max="100" step="1" value="85" required></label>
+            <button class="primary-button" type="submit">Calculate estimate</button>
+          </form>
+          <div class="result-card"><span class="eyebrow light">ESTIMATED SCRAP VALUE</span><strong id="result">£—</strong><p id="result-note">Enter the item details and a current pure-metal spot price.</p><small>Estimate only. Actual offers depend on the buyer, testing, fees and market movement.</small></div>
+        </div>
+      </section>
+
+      <section class="view" id="map">
+        <div class="section-heading"><div><span class="eyebrow">YOUR PLACES</span><h2>My map</h2></div></div>
+        <div class="empty-state"><span>⌖</span><h3>Your map is coming next</h3><p>We'll add a map where you can save charity shops, car boot sales, antiques shops and other useful locations. Each place can be private or shared.</p></div>
+      </section>
+
+      <section class="view" id="finds">
+        <div class="section-heading"><div><span class="eyebrow">YOUR DISCOVERIES</span><h2>Finds</h2></div></div>
+        <div class="empty-state"><span>✧</span><h3>Your finds collection is coming next</h3><p>Record what you discover, add photos, dates, notes and estimated values.</p></div>
+      </section>
+
+      <section class="view" id="leaderboard">
+        <div class="section-heading"><div><span class="eyebrow">THE COMMUNITY</span><h2>Leaderboard</h2></div></div>
+        <div class="empty-state"><span>♛</span><h3>The leaderboard is coming next</h3><p>We'll support rankings by number of finds and total estimated value, with privacy controls.</p></div>
+      </section>
+
+      <footer>Treasure Group <span>·</span> Built for the thrill of the find.</footer>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
