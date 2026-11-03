@@ -13,10 +13,17 @@
     <div class="brand-mark access-mark">TG</div>
     <p class="eyebrow">PRIVATE GROUP SPACE</p>
     <h1>Sign in</h1>
-    <p class="muted">Enter the group code and choose your profile.</p>
-    <label>Access code<input id="access-code" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter access code" required></label>
-    <label>Your name<select id="access-profile" required><option value="">Choose your profile</option><option value="Logan">Logan</option><option value="Debbie">Debbie</option></select></label>
-    <button class="button primary" type="submit">Enter Treasure Group</button>
+    <div id="login-pin-step">
+      <p class="muted">Step 1 of 2 · Enter the group PIN.</p>
+      <label>Access PIN<input id="access-code" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter PIN" required></label>
+      <button class="button primary" type="submit">Continue</button>
+    </div>
+    <div id="login-person-step" hidden>
+      <p class="muted">Step 2 of 2 · Who's using Treasure Group?</p>
+      <label>Choose your person<select id="access-profile"><option value="">Choose your profile</option><option value="Logan">Logan</option><option value="Debbie">Debbie</option></select></label>
+      <button class="button primary" id="finish-login" type="button">Continue to app</button>
+      <button class="button secondary" id="back-to-pin" type="button">Back</button>
+    </div>
     <p id="access-error" class="access-error" role="alert"></p>
     <p class="access-disclaimer">Basic shared-code access only. This is not secure authentication; do not store sensitive information here.</p>
   </form>
